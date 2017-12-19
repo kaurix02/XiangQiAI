@@ -18,11 +18,11 @@ class Board:
 	def __init__(self, strboard = None):	#strboard for if you want to load a board from string
 		self.player = 0
 		if strboard == None:
-			self.initboard()
+			self.__initboard()
 		else:
-			self.initboard(strboard)
+			self.__initboard(strboard)
 		self.show()
-	def initboard(self, strboard = defboard):
+	def __initboard(self, strboard = defboard):
 		self.board = []	#all pieces on board
 		for i in range(10):
 			self.board.append([])
