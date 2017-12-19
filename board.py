@@ -57,17 +57,18 @@ class Board:
 		pass
 	def getmoves(self):
 		pass
-	def makemove(self, x1, y1, x2, y2):
-		pass
+	def makemove(self, x1, y1, x2, y2):	#Move piece at x1,y1 to x2,y2
+		self.board[x1][y1], self.board[x2][y2] = None, self.board[x1][y1]
+		self.board[x2][y2].set(x2,y2)
 class Piece:
 	def __init__(self, name,x,y,pl):
 		self.name = name
 		self.x = x
 		self.y = y
-		self.pl = pl
-	def __str__(self):
+		self.pl = pl	#Which player this belongs to
+	def __str__(self):	#For printing with print command
 		return self.name+str(self.pl)
-	def __repr__(self):
+	def __repr__(self):	#For if printing as part of list
 		return self.name+str(self.pl)
 	def getmoves(self):
 		if self.name=='S':	#Soldier/pawn
@@ -169,5 +170,8 @@ class Piece:
 			if self.y-1 in boxy:
 				moves.append((self.x,self.y-1))
 			return moves
+	def set(self, x, y):	#Move current position
+		self.x = x
+		self.y = y
 
 Board()
