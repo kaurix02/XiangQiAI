@@ -17,6 +17,7 @@ clear = lambda: os.system('cls' if os.name=='nt' else 'clear')
 class Board:
 	def __init__(self, strboard = None):	#strboard for if you want to load a board from string
 		self.player = 0
+		self.won = None	#Who won, also used to check if gameover
 		if strboard == None:
 			self.__initboard()
 		else:
@@ -55,11 +56,14 @@ class Board:
 			print()
 	def canmove(self):
 		pass
-	def getmoves(self):
+	def getmoves(self, player):	#Get all possible moves for given player.
 		pass
-	def makemove(self, x1, y1, x2, y2):	#Move piece at x1,y1 to x2,y2
+	def makemove(self, frp, top):	#Move piece at x1,y1 to x2,y2
+		x1,y1 = frp	#From
+		x2,y2 = top	#To
 		self.board[x1][y1], self.board[x2][y2] = None, self.board[x1][y1]
 		self.board[x2][y2].set(x2,y2)
+		self.player = (self.player+1)%2	#Change whose turn it is
 class Piece:
 	def __init__(self, name,x,y,pl):
 		self.name = name
