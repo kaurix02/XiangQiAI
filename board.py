@@ -95,13 +95,17 @@ class Board:
 		for movepiece in moves:
 			for move in moves[movepiece]:
 				if self.board[move[0]],[move[1]]!=None and self.board[move[0]],[move[1]].name=="G":
-					return True
-		return False
+					self.check=True
+		self.check=False
+	def ischeckmate(self):	#Checks if game over
+		if self.check and len(getmoves(self.player))==0:
+			self.won = (self.player+1)%2	#Declares winner
 		
 	def getmoves(self, player):	#Get all possible moves for given player.
 		moves = {}	#Valid moves per piece
 		covers = {}	#Which friendly pieces are 'protected' by piece
 		### TODO
+		### Once all moves found, if player in check (self.check), filter out moves that do not escape from check
 		return moves, covers
 	def makemove(self, *args):	#Move piece at x1,y1 to x2,y2
 		if len(args)==4:
@@ -114,8 +118,9 @@ class Board:
 		self.board[x2][y2].set(x2,y2)
 		self.player = (self.player+1)%2	#Change whose turn it is
 		self.show()
-		if self.ischeck():
+		if self.check:
 			print("## You are in check! ##")
+		self.ischeckmate()
 class Piece:
 	def __init__(self, name,x,y,pl):
 		self.name = name
