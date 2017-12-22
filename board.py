@@ -11,6 +11,7 @@ S S S S S
 RHEAGAEHR
 """
 import os
+from copy import deepcopy
 clear = lambda: os.system('cls' if os.name=='nt' else 'clear')
 
 
@@ -90,18 +91,18 @@ class Board:
 					else:	#LoS blocked
 						break
 		return False	#No True condition met, no LoS
-	def ischeck(self):	#returns True if the opponent could take Governor on next turn
-		moves = self.getmoves((self.player+1)%2)
+	def ischeck(self, player=(self.player+1)%2):	#returns True if the opponent could take Governor on next turn
+		moves = self.getmoves(player)
 		for movepiece in moves:
 			for move in moves[movepiece]:
 				if self.board[move[0]],[move[1]]!=None and self.board[move[0]],[move[1]].name=="G":
 					self.check=True
 		self.check=False
 	def ischeckmate(self):	#Checks if game over
-		if self.check and len(getmoves(self.player))==0:
+		if self.check and len(getmoves())==0:
 			self.won = (self.player+1)%2	#Declares winner
 		
-	def getmoves(self, player):	#Get all possible moves for given player.
+	def getmoves(self, player=self.player):	#Get all possible moves for given player.
 		moves = {}	#Valid moves per piece
 		covers = {}	#Which friendly pieces are 'protected' by piece
 		### TODO
