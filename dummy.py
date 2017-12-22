@@ -12,6 +12,7 @@ class Dummy:
 	def move(self):
 		moves = self.board.getmoves(self.pl)
 		choice = len(moves)*random()
-		mymove = moves[choice]
-		print("Dummy "+str(pl)+" moving "+str(mymove)+".")
-		self.board.makemove(mymove[0:2],mymove[2:])
+		mypiece = list(moves.keys())[choice]	#Choose piece to move
+		mymove = moves[mypiece][len(moves[mypiece])*random()]
+		print("Dummy "+str(pl)+" moving "+str(mypiece)+" to "+str(mymove)+".")
+		self.board.makemove(mypiece,mymove)

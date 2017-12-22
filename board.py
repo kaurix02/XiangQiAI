@@ -56,11 +56,18 @@ class Board:
 			print()
 	def canmove(self):
 		pass
+	def seesGov(self, pos, pl):	#True if that position is in direct line of sight to opposing governor; usable for Rook/Governor move checks
+		x,y = pos
+		
 	def getmoves(self, player):	#Get all possible moves for given player.
 		pass
-	def makemove(self, frp, top):	#Move piece at x1,y1 to x2,y2
-		x1,y1 = frp	#From
-		x2,y2 = top	#To
+	def makemove(self, *args):	#Move piece at x1,y1 to x2,y2
+		if len(args)==4:
+			x1,y1 = args[0], args[1]	#From
+			x2,y2 = args[2], args[3]	#To
+		elif len(args)==3:
+			x1,y1 = args[0].x, args[0].y	#Get From from Piece
+			x2,y2 = args[1], args[2]	#To
 		self.board[x1][y1], self.board[x2][y2] = None, self.board[x1][y1]
 		self.board[x2][y2].set(x2,y2)
 		self.player = (self.player+1)%2	#Change whose turn it is
