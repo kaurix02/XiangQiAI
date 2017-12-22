@@ -54,13 +54,55 @@ class Board:
 				else:
 					print(piece, end="|")
 			print()
-	def canmove(self):
+	def canmove(self, piece, pos):	#piece.name gets us piece type
+		x,y = pos[0],pos[1]	#Target position
+		### TODO
 		pass
-	def seesGov(self, pos, pl):	#True if that position is in direct line of sight to opposing governor; usable for Rook/Governor move checks
-		x,y = pos
+	def seesGov(self, *args):	#True if that position is in direct line of sight to opposing governor; usable for Rook/Governor move checks
+		if len(args)==1:	#If Piece is given
+			x,y,pl = args[0].x, args[0].y, args[0].pl
+		elif len(args)==3:	#If x,y,pl is given
+			x,y = args[0], args[1], args[2]
+		if pl == 0:
+			if x not in [7,8,9] and y not in [3,4,5]:	#No possible LoS
+				return False
+		elif pl == 1:
+			if x not in [0,1,2] and y not in [3,4,5]:	#No possible LoS
+				return False
+		if y in [3,4,5]:	#Vertical
+			for i in range(y-1,-1,-1):
+				if self.board[x,i]!=None:	#Piece found
+					if self.board[x,i].name='G' and self.board[x,i].pl != pl:	#If hostile governor
+						return True
+					else:	#LoS blocked
+						break
+			for i in range(y+1,9):
+				if self.board[x,i]!=None:
+					if self.board[x,i].name='G' and self.board[x,i].pl != pl:	#If hostile governor
+						return True
+					else:	#LoS blocked
+						break
+		if x in [0,1,2,7,8,9]:	#Horizontal
+			for i in range(x-1,-1,-1):
+				if self.board[i,y]!=None:
+					if self.board[i,y].name=='G' and self.board[i,y].pl != pl:	#If hostile governor
+						return True
+					else:	#LoS blocked
+						break
+		return False	#No True condition met, no LoS
+	def ischeck(self):	#returns True if the opponent could take Governor on next turn
+		moves = self.getmoves((self.player+1)%2)
+		for movepiece in moves:
+			for move in moves[movepiece]:
+				if self.board[move[0]],[move[1]]!=None and self.board[move[0]],[move[1]].name=="G":
+					return True
+		return False
 		
 	def getmoves(self, player):	#Get all possible moves for given player.
-		pass
+		moves = {}	#Valid moves per piece
+		covers = {}	#Which friendly pieces are 'protected' by piece
+		### TODO
+		return moves, covers
 	def makemove(self, *args):	#Move piece at x1,y1 to x2,y2
 		if len(args)==4:
 			x1,y1 = args[0], args[1]	#From
@@ -71,6 +113,9 @@ class Board:
 		self.board[x1][y1], self.board[x2][y2] = None, self.board[x1][y1]
 		self.board[x2][y2].set(x2,y2)
 		self.player = (self.player+1)%2	#Change whose turn it is
+		self.show()
+		if self.ischeck():
+			print("## You are in check! ##")
 class Piece:
 	def __init__(self, name,x,y,pl):
 		self.name = name
