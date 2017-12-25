@@ -1,15 +1,16 @@
-# Movement maxxer model. Plays whichever move either wins or creates the most possible moves for next move (frees up pieces).
+# Movement maxxer model. Plays whichever move either wins or creates the most possible moves for next move (frees up pieces). Also checks for piece values
 
 from random import random
 from copy import deepcopy
+from common import values
 
-class MvMax:
+class MvMax2:
 	def __init__(self, pl, board):
 		self.pl = pl
 		self.board = board
 		print(self)
 	def __str__(self):
-		return "MoveMaxxer player, side: "+str(self.pl)
+		return "MoveMaxxer player, side: "+str(self.pl)+", smart"
 	def move(self):
 		moves,c = self.board.getmoves(self.pl)
 		tmoves, tc = len(moves), len(c)
@@ -33,7 +34,7 @@ class MvMax:
 		else:
 			score = movesLater - movesNow	#Add gained moves
 			score += (covLater - covNow)*2	#Add gained friendly covers *2
-			score += (thrNow - thrLater)*3	#Remove gained threats *3
+			score += (thrNow - thrLater)*2	#Smaller scalar to account for threat value
 			return score	#return heuristic score for move
 	def threats(self, board):
 		opMoves,_ = board.getmoves((self.pl+1)%2)	#Get potential moves by opponent
@@ -41,5 +42,13 @@ class MvMax:
 		for p in opMoves:
 			for m in opMoves[p]:
 				if board[m[0]][m[1]]!=None and board[m[0]][m[1]].pl==self.pl:	#If enemy piece can move to take friendly piece
-					count += 1	#Without piece values
+					tp = board[m[0]][m[1]]
+					if tp.name == "S":	#Check if my Soldier has crossed river
+						if self.pl==0 and m[0]>5:
+							count += values["SR"]
+							continue
+						elif self.pl==1 and m[0]<6:
+							count += values["SR"]
+							continue
+					count += values[tp.name]
 		return count

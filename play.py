@@ -3,8 +3,10 @@
 from board import Board
 from human import Human
 from dummy import Dummy
+from mvmax import MvMax
+from mvmax2 import MvMax2
 
-players = [Human, Dummy]	#List of possible players to choose from
+players = [Human, Dummy, MvMax, MvMax2]	#List of possible players to choose from
 
 def newgame(pl1, pl2, newboard=None):
 	if newboard==None:
