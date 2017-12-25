@@ -7,7 +7,7 @@ class Human:
 		return "Human player, side: "+str(self.pl)
 	def move(self):
 		print("Available moves:")
-		moves = self.board.getmoves(self.pl)
+		moves,_ = self.board.getmoves(self.pl)
 		for i in moves:
 			print(i)
 		mymove = input("Your move: ").trim().split()
