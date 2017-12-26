@@ -2,7 +2,7 @@
 
 from random import random
 from copy import deepcopy
-from common import values
+from common import getValue
 
 class MvMax2:
 	def __init__(self, pl, board):
@@ -23,12 +23,14 @@ class MvMax2:
 		print("MoveMaxxer "+str(pl)+" moving "+str(best[0])+" to "+str(best[1])+".")
 		self.board.makemove(best[0],best[1])
 
-	def analyze(self, piece, move, movesNow, covNow):	#Analyzes move, return evaluation based on gained moves
+	def analyze(self, piece, move, movesNow, cov):	#Analyzes move, return evaluation based on gained moves
 		board2 = deepcopy(self.board)
-		thrNow = self.threats(board2)
+		covNow = self.getCovers(self.board, cov)	#Score protected pieces
+		thrNow = self.threats(board2)	#Score threats to own pieces
 		board2.makemove(piece, move)
-		movesLater, covLater = len(board2.getmoves(self.pl))
-		thrLater = self.threats(board2)
+		movesLater, cov = len(board2.getmoves(self.pl))
+		covLater = self.getCovers(board2, cov)	#Score protected pieces
+		thrLater = self.threats(board2)	#Score threats to own pieces
 		if board2.won:	#if move would win the game
 			return 9999	#return over 9000
 		else:
@@ -36,19 +38,19 @@ class MvMax2:
 			score += (covLater - covNow)*2	#Add gained friendly covers *2
 			score += (thrNow - thrLater)*2	#Smaller scalar to account for threat value
 			return score	#return heuristic score for move
-	def threats(self, board):
+	def getThreats(self, board):
 		opMoves,_ = board.getmoves((self.pl+1)%2)	#Get potential moves by opponent
 		count = 0
 		for p in opMoves:
 			for m in opMoves[p]:
 				if board[m[0]][m[1]]!=None and board[m[0]][m[1]].pl==self.pl:	#If enemy piece can move to take friendly piece
 					tp = board[m[0]][m[1]]
-					if tp.name == "S":	#Check if my Soldier has crossed river
-						if self.pl==0 and m[0]>5:
-							count += values["SR"]
-							continue
-						elif self.pl==1 and m[0]<6:
-							count += values["SR"]
-							continue
-					count += values[tp.name]
+					count += getValue(tp)
+		return count
+	def getCovers(self, board, covers):
+		count = 0
+		for p in covers:
+			for m in covers:
+				tp = board[m[0]][m[1]]
+				count += getValue(tp)
 		return count
