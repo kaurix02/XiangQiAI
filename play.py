@@ -1,12 +1,13 @@
 # This class is where we pit players against each other
 
-from board import Board
-from human import Human
-from dummy import Dummy
-from mvmax import MvMax
-from mvmax2 import MvMax2
+from board import Board	#Board itself
+from human import Human	#Human player for testing
+from dummy import Dummy	#Dummy player with random moves
+from mvmax import MvMax	#AI player wants more mobility
+from mvmax2 import MvMax2	#AI player wants more mobility weighed by piece threats
+from sfocus import SFocus	#AI player wants defend/attack valuable pieces
 
-players = [Human, Dummy, MvMax, MvMax2]	#List of possible players to choose from
+players = [Human, Dummy, MvMax, MvMax2, SFocus]	#List of possible players to choose from
 
 def newgame(pl1, pl2, newboard=None):
 	if newboard==None:
