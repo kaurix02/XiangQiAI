@@ -12,7 +12,7 @@ class MvMax2:
 	def __str__(self):
 		return "MoveMaxxer player, side: "+str(self.pl)+", smart"
 	def move(self):
-		moves,c = self.board.getmoves(self.pl)
+		moves,c = self.board.get_moves(self.pl)
 		tmoves, tc = len(moves), len(c)
 		best = (None, None, -9999)
 		for p in moves:
@@ -28,7 +28,7 @@ class MvMax2:
 		covNow = self.getCovers(self.board, cov)	#Score protected pieces
 		thrNow = self.threats(board2)	#Score threats to own pieces
 		board2.makemove(piece, move)
-		movesLater, cov = len(board2.getmoves(self.pl))
+		movesLater, cov = len(board2.get_moves(self.pl))
 		covLater = self.getCovers(board2, cov)	#Score protected pieces
 		thrLater = self.threats(board2)	#Score threats to own pieces
 		if board2.won:	#if move would win the game
@@ -39,7 +39,7 @@ class MvMax2:
 			score += (thrNow - thrLater)*2	#Smaller scalar to account for threat value
 			return score	#return heuristic score for move
 	def getThreats(self, board):
-		opMoves,_ = board.getmoves((self.pl+1)%2)	#Get potential moves by opponent
+		opMoves,_ = board.get_moves((self.pl+1)%2)	#Get potential moves by opponent
 		count = 0
 		for p in opMoves:
 			for m in opMoves[p]:

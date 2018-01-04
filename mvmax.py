@@ -11,7 +11,7 @@ class MvMax:
 	def __str__(self):
 		return "MoveMaxxer player, side: "+str(self.pl)
 	def move(self):
-		moves,c = self.board.getmoves(self.pl)
+		moves,c = self.board.get_moves(self.pl)
 		tmoves, tc = len(moves), len(c)
 		best = (None, None, -9999)
 		for p in moves:
@@ -26,7 +26,7 @@ class MvMax:
 		board2 = deepcopy(self.board)
 		thrNow = self.threats(board2)
 		board2.makemove(piece, move)
-		movesLater, covLater = len(board2.getmoves(self.pl))
+		movesLater, covLater = len(board2.get_moves(self.pl))
 		thrLater = self.threats(board2)
 		if board2.won:	#if move would win the game
 			return 9999	#return over 9000
@@ -36,7 +36,7 @@ class MvMax:
 			score += (thrNow - thrLater)*3	#Remove gained threats *3
 			return score	#return heuristic score for move
 	def threats(self, board):
-		opMoves,_ = board.getmoves((self.pl+1)%2)	#Get potential moves by opponent
+		opMoves,_ = board.get_moves((self.pl+1)%2)	#Get potential moves by opponent
 		count = 0
 		for p in opMoves:
 			for m in opMoves[p]:
