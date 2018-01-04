@@ -10,7 +10,7 @@ class Dummy:
 	def __str__(self):
 		return "Dummy player, side: "+str(self.pl)
 	def move(self):
-		moves,_ = self.board.getmoves(self.pl)
+		moves,_ = self.board.get_moves(self.pl)
 		choice = len(moves)*random()
 		mypiece = list(moves.keys())[choice]	#Choose piece to move
 		mymove = moves[mypiece][len(moves[mypiece])*random()]

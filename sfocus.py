@@ -12,7 +12,7 @@ class SFocus:
 	def __str__(self):
 		return "SingleFocus player, side: "+str(self.pl)
 	def move(self):
-		moves, c = self.board.getmoves(self.pl)
+		moves, c = self.board.get_moves(self.pl)
 		tmoves, tc = len(moves), len(c)
 		maxPr = (None, -9999)	#Check most priority
 		opPr = (None, -9999)	#Check most priority for opponent
@@ -91,11 +91,13 @@ class SFocus:
 				count += getValue(tp)
 		return count
 
-	def getPriority(self, piece, board = self.board):
+	def getPriority(self, piece, board = None):
+		if board == None:
+			board = self.board
 		threats = 0	#Count threats to this piece
 		covers = 0	#Count how many friendlies protect this piece
-		_, cov = board.getmoves(piece.pl)
-		opMoves,_ = board.getmoves((piece.pl+1)%2)
+		_, cov = board.get_moves(piece.pl)
+		opMoves,_ = board.get_moves((piece.pl+1)%2)
 		for p in opMoves:
 			for m in opMoves[p]:
 				if m[0]==piece.x and m[1]==piece.y:	#If enemy piece threatens this piece
@@ -104,7 +106,7 @@ class SFocus:
 			for cp in cov[p]:
 				if cp == piece:	#If friendly piece covers this piece
 					covers += 1
-		return (threats-covers)*getvalue(piece)	#returns threat level weighed by piece value
+		return (threats-covers)*getValue(piece)	#returns threat level weighed by piece value
 	def doDef(self, piece, move, maxPr):
 		score = 0
 		board2 = deepcopy(self.board)	#Copy board
@@ -136,5 +138,5 @@ class SFocus:
 			if sc > score[1]:
 				score = (p, sc)
 		res = (score[0], mFinal, score[1]+10)	#Add value to show the benefit of a good offense!
-		print("Best offensive move: "+str(res)
+		print("Best offensive move: "+str(res))
 		return res
