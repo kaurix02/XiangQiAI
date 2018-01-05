@@ -1,5 +1,8 @@
 from collections import defaultdict
+import os
+from copy import deepcopy
 
+clear = lambda: os.system('cls' if os.name == 'nt' else 'clear')
 
 defboard = """
 RHEAGAEHR
@@ -13,21 +16,17 @@ S S S S S
          
 RHEAGAEHR
 """
-import os
-from copy import deepcopy
-
-clear = lambda: os.system('cls' if os.name == 'nt' else 'clear')
 
 
 class Board:
-	def __init__(self, strboard=None):  # strboard for if you want to load a board from string
+	def __init__(self, strboard=None):	# strboard for if you want to load a board from string
 		self.player = 0
 		self.won = None  # Who won, also used to check if gameover
 		if strboard is None:
 			self.__initboard()
 		else:
 			self.__initboard(strboard)
-		# self.show()
+	# self.show()
 
 	def __initboard(self, strboard=defboard):
 		self.board = []  # all pieces on board
@@ -64,7 +63,7 @@ class Board:
 						self.board[i][j] = Piece(piece[0], i, j, int(piece[1]))
 
 	def show(self):
-		clear()
+		# clear()
 		for row in self.board:
 			print("|", end="")
 			for piece in row:
@@ -150,7 +149,6 @@ class Board:
 		if not self.is_unblocked(piece, pos):
 			return False
 
-
 		x, y = pos[0], pos[1]  # Target position
 		new_board = deepcopy(self)
 		new_board.make_move(piece, x, y)
@@ -234,7 +232,7 @@ class Board:
 		return False
 
 	def is_checkmate(self):  # Checks if game over
-		if self.check and len(self.get_moves()) == 0:
+		if self.check and len(self.get_moves()[0]) == 0:
 			self.won = (self.player + 1) % 2  # Declares winner
 
 	def get_unblocked_moves(self, player=None):
@@ -312,19 +310,29 @@ class Board:
 		moves = {}  # Valid moves per piece
 		### Once all moves found, if player in check (self.check), filter out moves that do not escape from check
 		for piece in self.get_pieces(player):
-			moves[piece] = list(filter(lambda pos: self.can_move(piece, pos), piece.get_all_moves()))
+			valid_moves = list(filter(lambda pos: self.can_move(piece, pos), piece.get_all_moves()))
+			if valid_moves != []:
+				moves[piece] = valid_moves
 
+		if len(moves) == 0 and self.is_check():
+			self.won = (self.player + 1) % 2
 		covers = self.get_protectors(player)  # Which friendly pieces are 'protected' by piece
 		return moves, covers
 
 	def make_move(self, *args):  # Move piece at x1,y1 to x2,y2
+		x1, y1, x2, y2 = None, None, None, None
 		if len(args) == 4:
 			x1, y1 = args[0], args[1]  # From
 			x2, y2 = args[2], args[3]  # To
 		elif len(args) == 3:
 			x1, y1 = args[0].x, args[0].y  # Get from Piece
 			x2, y2 = args[1], args[2]  # To
-		self.board[x1][y1], self.board[x2][y2] = None, self.board[x1][y1]
+		elif len(args) == 2:
+			x1, y1 = args[0].x, args[0].y  # Get from Piece
+			x2, y2 = args[1]  # To
+		p1 = self.board[x1][y1]
+		self.board[x2][y2] = p1
+		self.board[x1][y1] = None
 		self.board[x2][y2].set(x2, y2)
 		self.player = (self.player + 1) % 2  # Change whose turn it is
 		# self.show()
@@ -359,7 +367,7 @@ class Piece:
 
 	def __eq__(self, other):
 		if self is None or other is None:
-			return self is None and other is None  # TODO: This seems stupid...
+			return self is None and other is None
 		return self.name == other.name and self.x == other.x and self.y == other.y and self.pl == other.pl
 
 	def __hash__(self):

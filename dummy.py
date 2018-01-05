@@ -1,18 +1,25 @@
-#Dummy is a baseline model, takes all possible moves he can make and chooses one completely randomly.
+# Dummy is a baseline model, takes all possible moves he can make and chooses one completely randomly.
 
 from random import random
+
 
 class Dummy:
 	def __init__(self, pl, board):
 		self.pl = pl
 		self.board = board
 		print(self)
+
 	def __str__(self):
-		return "Dummy player, side: "+str(self.pl)
+		return "Dummy player, side: " + str(self.pl)
+
 	def move(self):
-		moves,_ = self.board.get_moves(self.pl)
-		choice = len(moves)*random()
-		mypiece = list(moves.keys())[choice]	#Choose piece to move
-		mymove = moves[mypiece][len(moves[mypiece])*random()]
-		print("Dummy "+str(pl)+" moving "+str(mypiece)+" to "+str(mymove)+".")
-		self.board.makemove(mypiece,mymove)
+		self.board.show()
+		moves, _ = self.board.get_moves(self.pl)
+		if len(moves) == 0 and self.board.check:
+			print("Player %d lost!" % self.pl)
+			return
+		choice = int(len(moves) * random())
+		my_piece = list(moves.keys())[choice]  # Choose piece to move
+		my_move = moves[my_piece][int(len(moves[my_piece]) * random())]
+		print("Dummy " + str(self.pl) + " moving " + str(my_piece) + " to " + str(my_move) + ".")
+		self.board.make_move(my_piece, my_move)
