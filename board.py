@@ -234,6 +234,8 @@ class Board:
 	def is_checkmate(self):  # Checks if game over
 		if len(self.get_moves()) == 0:	#No moves left - either cannot move or cannot escape check
 			self.won = (self.player + 1) % 2  # Declares winner
+			return
+		print(len(self.get_moves()))
 		p1pieces = self.get_pieces(0)
 		for piece in p1pieces:
 			if piece.name in ["R","C","H","S"]:

@@ -16,7 +16,7 @@ class SFocus:
 		tmoves, tc = len(moves), len(c)
 		maxPr = (None, -9999)	#Check most priority
 		opPr = (None, -9999)	#Check most priority for opponent
-		for i in self.board:	#Rows
+		for i in self.board.board:	#Rows
 			for j in i:	#Pieces
 				if j == None:	#If no piece is there, ignore
 					continue
@@ -29,7 +29,7 @@ class SFocus:
 						opPr = (j,pr)
 		best = (None, None, -9999)
 
-		if maxPr>2:	#If something valuable is under threat, do something defensive
+		if maxPr[1]>2:	#If something valuable is under threat, do something defensive
 			for p in moves:
 				for m in moves[p]:
 					deval = self.doDef(p,m,maxPr)
@@ -37,15 +37,15 @@ class SFocus:
 						best = (p,m,deval)
 		print("SFocus best defensive move: "+str(best))
 
-		if opPr>2:	#If something valuable can be taken, take!
-			p, m, deval = self.doAtt(opPr[0], moves, c)
+		if opPr[1]>2:	#If something valuable can be taken, take!
+			p, m, deval = self.doAtt(opPr, moves, c)
 			if deval > best[2]:
 				best = (p,m,deval)
 		print("SFocus best defensive/offensive move: "+str(best))
 
 		for p in moves:
 			for m in moves[p]:
-				deval = self.analyze(p,m,tmoves,tc)
+				deval = self.analyze(p,m,tmoves,c)
 				if deval == 9999:
 					best = (p,m,deval)
 					print("SFocus dealing Checkmate!")
@@ -53,20 +53,21 @@ class SFocus:
 		if best[2] < 10:	#If the best move so far is a bad move
 			for p in moves:
 				for m in moves[p]:
-					deval = self.analyze(p,m,tmoves, tc)
+					deval = self.analyze(p,m,tmoves, c)
 					if deval > best[2]:	#If evaluation beats current best move
 						best = (p,m,deval)	#New best move saved!
-		print("SingleFocus "+str(pl)+" moving "+str(best[0])+" to "+str(best[1])+".")
-		self.board.makemove(best[0],best[1])
+		print("SingleFocus "+str(self.pl)+" moving "+str(best[0])+" to "+str(best[1])+".")
+		self.board.make_move(best[0],best[1])
 
 	def analyze(self, piece, move, movesNow, cov):	#Analyzes move, return evaluation based on gained moves
 		board2 = deepcopy(self.board)
 		covNow = self.getCovers(self.board, cov)	#Score protected pieces
-		thrNow = self.threats(board2)	#Score threats to own pieces
-		board2.makemove(piece, move)
-		movesLater, cov = len(board2.getmoves(self.pl))
-		covLater = self.getCovers(board2, cov)	#Score protected pieces
-		thrLater = self.threats(board2)	#Score threats to own pieces
+		thrNow = self.getThreats(board2)	#Score threats to own pieces
+		board2.make_move(piece, move)
+		movesLater, cov2 = board2.get_moves(self.pl)
+		movesLater = len(movesLater)
+		covLater = self.getCovers(board2, cov2)	#Score protected pieces
+		thrLater = self.getThreats(board2)	#Score threats to own pieces
 		if board2.won:	#if move would win the game
 			return 9999	#return over 9000
 		else:
@@ -75,19 +76,19 @@ class SFocus:
 			score += (thrNow - thrLater)*2	#Smaller scalar to account for threat value
 			return score	#return heuristic score for move
 	def getThreats(self, board):
-		opMoves,_ = board.getmoves((self.pl+1)%2)	#Get potential moves by opponent
+		opMoves,_ = board.get_moves((self.pl+1)%2)	#Get potential moves by opponent
 		count = 0
 		for p in opMoves:
 			for m in opMoves[p]:
-				if board[m[0]][m[1]]!=None and board[m[0]][m[1]].pl==self.pl:	#If enemy piece can move to take friendly piece
-					tp = board[m[0]][m[1]]
+				if board.board[m[0]][m[1]]!=None and board.board[m[0]][m[1]].pl==self.pl:	#If enemy piece can move to take friendly piece
+					tp = board.board[m[0]][m[1]]
 					count += getValue(tp)
 		return count
 	def getCovers(self, board, covers):
 		count = 0
 		for p in covers:
 			for m in covers:
-				tp = board[m[0]][m[1]]
+				tp = board.board[m.x][m.y]
 				count += getValue(tp)
 		return count
 
@@ -110,9 +111,9 @@ class SFocus:
 	def doDef(self, piece, move, maxPr):
 		score = 0
 		board2 = deepcopy(self.board)	#Copy board
-		board2.makemove(piece, move)
+		board2.make_move(piece, move)
 		maxPr2 = (None, -9999)	#Check most priority after move
-		for i in board2:	#Rows
+		for i in board2.board:	#Rows
 			for j in i:	#Pieces
 				if j == None:	#If no piece is there, ignore
 					continue
@@ -128,7 +129,7 @@ class SFocus:
 		score = (None, -9999)
 		pieces = []
 		for p in moves:
-			for m in moves:
+			for m in moves[p]:
 				if m == mFinal:
 					pieces.append(p)
 		for p in pieces:

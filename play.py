@@ -20,12 +20,16 @@ def new_game(pl1, pl2, new_board=None):
 	moves = 0 # Count total number of moves
 	while new_board.won is None:  # While game continues...
 		print("Move %d" % moves)
+		new_board.show()
 		if new_board.player == 0:
 			pl1.move()
 			moves += 1
 		else:
-			pl2.move()		
+			pl2.move()	
+		if new_board.check:
+			print("### You are in check! ###")	
 		new_board.is_checkmate()
+	new_board.show()	#Show final state of game
 	if new_board.won == 2:
 		print("Game over, stalemate!")
 	else:
@@ -33,4 +37,4 @@ def new_game(pl1, pl2, new_board=None):
 
 
 # new_game(Human, Human)	#Example to do human v human game
-new_game(Dummy, Dummy)  # Example to do dummy v dummy game
+new_game(Dummy, SFocus)  # Example to do dummy v dummy game

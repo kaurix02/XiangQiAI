@@ -13,13 +13,12 @@ class Dummy:
 		return "Dummy player, side: " + str(self.pl)
 
 	def move(self):
-		self.board.show()
+		#self.board.show()
 		moves, _ = self.board.get_moves(self.pl)
 		if len(moves) == 0 and self.board.check:
 			print("Player %d lost!" % self.pl)
 			return
 		choice = int(len(moves) * random())
-		print(len(moves), choice)
 		my_piece = list(moves.keys())[choice]  # Choose piece to move
 		my_move = moves[my_piece][int(len(moves[my_piece]) * random())]
 		print("Dummy " + str(self.pl) + " moving " + str(my_piece) + " to " + str(my_move) + ".")
