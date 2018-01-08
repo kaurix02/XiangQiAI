@@ -17,12 +17,19 @@ def new_game(pl1, pl2, new_board=None):
 		new_board = Board(new_board)  # Make board from string
 	pl1 = pl1(0, new_board)  # Turn class into object for player1
 	pl2 = pl2(1, new_board)  # Turn class into object for player2
+	moves = 0 # Count total number of moves
 	while new_board.won is None:  # While game continues...
+		print("Move %d" % moves)
 		if new_board.player == 0:
 			pl1.move()
+			moves += 1
 		else:
-			pl2.move()
-	print("Game over, winner: " + str(new_board.won))
+			pl2.move()		
+		new_board.is_checkmate()
+	if new_board.won == 2:
+		print("Game over, stalemate!")
+	else:
+		print("Game over, winner: " + str(new_board.won))
 
 
 # new_game(Human, Human)	#Example to do human v human game

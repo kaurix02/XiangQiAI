@@ -232,8 +232,17 @@ class Board:
 		return False
 
 	def is_checkmate(self):  # Checks if game over
-		if self.check and len(self.get_moves()[0]) == 0:
+		if len(self.get_moves()) == 0:	#No moves left - either cannot move or cannot escape check
 			self.won = (self.player + 1) % 2  # Declares winner
+		p1pieces = self.get_pieces(0)
+		for piece in p1pieces:
+			if piece.name in ["R","C","H","S"]:
+				return
+		p2pieces = self.get_pieces(1)
+		for piece in p2pieces:
+			if piece.name in ["R","C","H","S"]:
+				return
+		self.won = 2	# Stalemate - neither player has offensive pieces
 
 	def get_unblocked_moves(self, player=None):
 		"""
@@ -338,7 +347,7 @@ class Board:
 		# self.show()
 		if self.check:
 			print("## You are in check! ##")
-		self.is_checkmate()
+		# self.is_checkmate()
 
 	def get_pieces(self, player=None):  # Get all the pieces of this player
 		if player is None:
