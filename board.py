@@ -325,7 +325,7 @@ class Board:
 			if valid_moves != []:
 				moves[piece] = valid_moves
 
-		if len(moves) == 0 and self.is_check():
+		if len(moves) == 0:
 			self.won = (self.player + 1) % 2
 		covers = self.get_protectors(player)  # Which friendly pieces are 'protected' by piece
 		return moves, covers

@@ -64,12 +64,13 @@ def run_test_bg(pls, n=50):
 			losses_m[i][j] = result[1][1]
 			ties[i][j] = result[2][0]
 			ties_m[i][j] = result[2][1]
-	np.savetxt("wins.csv",wins,delimiter=",")	#Save results
-	np.savetxt("wins_m.csv",wins_m,delimiter=",")
-	np.savetxt("losses.csv",losses,delimiter=",")
-	np.savetxt("losses_m.csv",losses_m,delimiter=",")
-	np.savetxt("ties.csv",ties,delimiter=",")
-	np.savetxt("ties_m.csv",ties_m,delimiter=",")
+	np.savetxt("results/wins.csv",wins,delimiter=",")	#Save results
+	np.savetxt("results/wins_m.csv",wins_m,delimiter=",")
+	np.savetxt("results/losses.csv",losses,delimiter=",")
+	np.savetxt("results/losses_m.csv",losses_m,delimiter=",")
+	np.savetxt("results/ties.csv",ties,delimiter=",")
+	np.savetxt("results/ties_m.csv",ties_m,delimiter=",")
 	
 # new_game(Human, Human)	#Example to do human v human game
-new_game(Dummy, Dummy)  # Example to do dummy v dummy game
+# new_game(Dummy, Dummy)  # Example to do dummy v dummy game
+run_test_bg(players[1:])
