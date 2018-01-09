@@ -8,8 +8,9 @@ from mvmax import MvMax  # AI player wants more mobility
 from mvmax2 import MvMax2  # AI player wants more mobility weighed by piece threats
 from sfocus import SFocus  # AI player wants defend/attack valuable pieces
 from tritac import TriTac  # AI player wants mobility, defend/attack and checkmate
+from alpha_beta import AlphaBeta
 
-players = [Human, Dummy, MvMax, MvMax2, SFocus, TriTac]  # List of possible players to choose from
+players = [Human, Dummy, MvMax, MvMax2, SFocus, TriTac, AlphaBeta]  # List of possible players to choose from
 
 
 def new_game(pl1, pl2, new_board=None, verbose=True):
@@ -84,5 +85,6 @@ def run_test_bg(pls, n=20):
 # new_game(Dummy, Dummy)	# Example to do dummy v dummy game
 # run_test_bg(players[1:])
 # run_test_med(TriTac, players[1:])
-print(run_test_sm(TriTac, MvMax,10))
+# print(run_test_sm(TriTac, MvMax,10))
+print(new_game(AlphaBeta, Dummy))
 # new_game(Dummy, TriTac)
