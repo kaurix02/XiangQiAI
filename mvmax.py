@@ -18,7 +18,9 @@ class MvMax:
 		for p in moves:
 			for m in moves[p]:
 				deval = self.analyze(p,m,tmoves, tc)
-				if deval > best[2]:	#If evaluation beats current best move
+				if best[0] = None:
+					best = (p,m,deval)
+				elif deval > best[2]:	#If evaluation beats current best move
 					best = (p,m,deval)	#New best move saved!
 				elif deval == best[2]:	#If evaluation equal to current
 					if random() > 0.5:	#Check if should update

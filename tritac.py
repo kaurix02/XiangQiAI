@@ -178,7 +178,7 @@ class TriTac:
 	def getOpMoves(self, piece, move):
 		board2 = deepcopy(self.board)
 		board2.make_move(piece, move)
-		opMoves = len(board2.get_moves((self.player+1)%2))
-		_, c = board2.get_moves(self.player)
+		opMoves = len(board2.get_moves((self.pl+1)%2))
+		_, c = board2.get_moves(self.pl)
 		covLater = self.getCovers(board2,c)
 		return (piece, move, opMoves, covLater)
