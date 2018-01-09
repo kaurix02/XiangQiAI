@@ -44,7 +44,7 @@ class AlphaBeta:
 
 		# 0. Check if game is won after move
 		if board_after.won:
-			return 9999
+			return 9999, (piece, move)
 
 		# 1. Space/number of moves for the opponent
 		n_op_moves = sum([len(moves) for moves in op_moves.values()])
