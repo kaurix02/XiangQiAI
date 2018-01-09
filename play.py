@@ -52,6 +52,9 @@ def run_test_sm(p1, p2, n=50):
 		if res[i][0]>0:
 			res[i][1]=res[i][1]/res[i][0]	#Average moves per game per result
 	return res
+def run_test_med(pl, pls, n=50):
+	for i in range(len(pls)):
+		print(run_test_sm(pl, pls[i], n))
 def run_test_bg(pls, n=50):
 	dim = len(pls)
 	wins = np.zeros((dim,dim))	#Initialize matrices for number of each result
@@ -79,5 +82,6 @@ def run_test_bg(pls, n=50):
 	
 # new_game(Human, Human)	# Example to do human v human game
 # new_game(Dummy, Dummy)	# Example to do dummy v dummy game
-run_test_bg(players[1:])
+#run_test_bg(players[1:])
+run_test_med(MvMax, players[1:])
 # new_game(Dummy, TriTac)
