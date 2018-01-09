@@ -82,7 +82,7 @@ class Board:
 		This method is used for checking if any of the opponents pieces can take out the king in the next move.
 		"""
 		# Check precondition
-		if pos not in piece.get_all_moves():
+		if pos not in piece.moves:
 			return False
 		x, y = pos[0], pos[1]  # Target position
 		curr_x, curr_y = piece.x, piece.y  # Current position
@@ -320,6 +320,7 @@ class Board:
 			player = self.player
 		moves = {}  # Valid moves per piece
 		### Once all moves found, if player in check (self.check), filter out moves that do not escape from check
+
 		for piece in self.get_pieces(player):
 			valid_moves = list(filter(lambda pos: self.can_move(piece, pos), piece.get_all_moves()))
 			if valid_moves != []:
@@ -383,8 +384,11 @@ class Piece:
 
 	def __hash__(self):
 		return hash((self.name, self.x, self.y, self.pl))
-
 	def get_all_moves(self):
+		self.moves = self.__get_all_moves()
+		return self.moves
+
+	def __get_all_moves(self):
 		if self.name == 'S':  # Soldier/pawn
 			if self.x < 5 and self.pl == 0:  # On player's side
 				return [(self.x + 1, self.y)]

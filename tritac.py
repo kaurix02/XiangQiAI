@@ -76,6 +76,12 @@ class TriTac:
 			best = self.minMoves(moves, c)
 		if self.verbose:
 			print("TriTac making move: "+str(best))
+		if best[0] is None:
+			print("Bug somewhere...")
+			choice = int(len(moves) * random())
+			my_piece = list(moves.keys())[choice]  # Choose piece to move
+			my_move = moves[my_piece][int(len(moves[my_piece]) * random())]
+			best = (my_piece,my_move)
 		self.board.make_move(best[0],best[1])
 
 	def analyze(self, piece, move, movesNow, cov):	#Analyzes move, return evaluation based on gained moves
