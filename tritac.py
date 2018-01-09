@@ -61,8 +61,15 @@ class TriTac:
 
 			if opPr[1]>2:	#If something valuable can be taken, take!
 				p, m, deval = self.doAtt(opPr, moves, c)
-				if deval > best[2]:
+				if best[0] is None:
 					best = (p,m,deval)
+				elif deval > best[2]:
+					best = (p,m,deval)
+			if best[0] is None:	#No good moves available
+				choice = int(len(moves) * random())
+				my_piece = list(moves.keys())[choice]  # Choose piece to move
+				my_move = moves[my_piece][int(len(moves[my_piece]) * random())]
+				best = (my_piece,my_move)
 			#if self.verbose:
 			#	print("TriTac best defensive/offensive move: "+str(best))
 		else:	#Once half the board has been cleared

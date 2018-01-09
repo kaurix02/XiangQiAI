@@ -145,5 +145,5 @@ class SFocus:
 			if sc > score[1]:
 				score = (p, sc)
 		res = (score[0], mFinal, score[1]+10)	#Add value to show the benefit of a good offense!
-		print("Best offensive move: "+str(res))
+		#print("Best offensive move: "+str(res))
 		return res
