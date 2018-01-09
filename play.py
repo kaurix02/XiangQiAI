@@ -7,8 +7,9 @@ from dummy import Dummy  # Dummy player with random moves
 from mvmax import MvMax  # AI player wants more mobility
 from mvmax2 import MvMax2  # AI player wants more mobility weighed by piece threats
 from sfocus import SFocus  # AI player wants defend/attack valuable pieces
+from tritac import TriTac  # AI player wants mobility, defend/attack and checkmate
 
-players = [Human, Dummy, MvMax, MvMax2, SFocus]  # List of possible players to choose from
+players = [Human, Dummy, MvMax, MvMax2, SFocus, TriTac]  # List of possible players to choose from
 
 
 def new_game(pl1, pl2, new_board=None, verbose=True):
@@ -68,6 +69,7 @@ def run_test_bg(pls, n=50):
 			losses_m[i][j] = result[1][1]
 			ties[i][j] = result[2][0]
 			ties_m[i][j] = result[2][1]
+			print(result)	#Show result because if bug later, could get first results.
 	np.savetxt("results/wins.csv",wins,delimiter=",")	#Save results
 	np.savetxt("results/wins_m.csv",wins_m,delimiter=",")
 	np.savetxt("results/losses.csv",losses,delimiter=",")
@@ -75,6 +77,7 @@ def run_test_bg(pls, n=50):
 	np.savetxt("results/ties.csv",ties,delimiter=",")
 	np.savetxt("results/ties_m.csv",ties_m,delimiter=",")
 	
-# new_game(Human, Human)	#Example to do human v human game
-# new_game(Dummy, Dummy)  # Example to do dummy v dummy game
+# new_game(Human, Human)	# Example to do human v human game
+# new_game(Dummy, Dummy)	# Example to do dummy v dummy game
 run_test_bg(players[1:])
+# new_game(Dummy, TriTac)
