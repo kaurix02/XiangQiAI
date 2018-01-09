@@ -4,9 +4,10 @@ from random import random
 
 
 class Dummy:
-	def __init__(self, pl, board):
+	def __init__(self, pl, board, verbose=True):
 		self.pl = pl
 		self.board = board
+		self.verbose = verbose
 		print(self)
 
 	def __str__(self):
@@ -21,5 +22,6 @@ class Dummy:
 		choice = int(len(moves) * random())
 		my_piece = list(moves.keys())[choice]  # Choose piece to move
 		my_move = moves[my_piece][int(len(moves[my_piece]) * random())]
-		print("Dummy " + str(self.pl) + " moving " + str(my_piece) + " to " + str(my_move) + ".")
+		if self.verbose:
+			print("Dummy " + str(self.pl) + " moving " + str(my_piece) + " to " + str(my_move) + ".")
 		self.board.make_move(my_piece, my_move)

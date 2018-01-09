@@ -5,9 +5,10 @@ from copy import deepcopy
 from common import getValue
 
 class MvMax2:
-	def __init__(self, pl, board):
+	def __init__(self, pl, board, verbose=True):
 		self.pl = pl
 		self.board = board
+		self.verbose = verbose
 		print(self)
 	def __str__(self):
 		return "MoveMaxxer player, side: "+str(self.pl)+", smart"
@@ -23,7 +24,8 @@ class MvMax2:
 				elif deval == best[2]:
 					if random() > 0.5:
 						best = (p,m,deval)
-		print("MoveMaxxer "+str(self.pl)+" moving "+str(best[0])+" to "+str(best[1])+".")
+		if self.verbose:
+			print("MoveMaxxer "+str(self.pl)+" moving "+str(best[0])+" to "+str(best[1])+".")
 		self.board.make_move(best[0],best[1])
 
 	def analyze(self, piece, move, movesNow, cov):	#Analyzes move, return evaluation based on gained moves

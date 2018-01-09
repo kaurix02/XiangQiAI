@@ -16,8 +16,8 @@ def new_game(pl1, pl2, new_board=None, verbose=True):
 		new_board = Board()  # Make new board
 	else:
 		new_board = Board(new_board)  # Make board from string
-	pl1 = pl1(0, new_board)  # Turn class into object for player1
-	pl2 = pl2(1, new_board)  # Turn class into object for player2
+	pl1 = pl1(0, new_board, verbose)  # Turn class into object for player1
+	pl2 = pl2(1, new_board, verbose)  # Turn class into object for player2
 	moves = 0 # Count total number of moves
 	while new_board.won is None:  # While game continues...
 		if verbose:
@@ -31,6 +31,9 @@ def new_game(pl1, pl2, new_board=None, verbose=True):
 		if new_board.check:
 			print("### You are in check! ###")	
 		new_board.is_checkmate()
+		if moves > 300:
+			print("### Game too long! ###")
+			new_board.won = 2
 	if verbose:
 		new_board.show()	#Show final state of game
 		if new_board.won == 2:
@@ -45,7 +48,8 @@ def run_test_sm(p1, p2, n=50):
 		res[r][0]+=1	#Count victory
 		res[r][1]+=m	#Count moves taken
 	for i in range(3):
-		res[i][1]=res[i][1]/res[i][0]	#Average moves per game per result
+		if res[i][0]>0:
+			res[i][1]=res[i][1]/res[i][0]	#Average moves per game per result
 	return res
 def run_test_bg(pls, n=50):
 	dim = len(pls)

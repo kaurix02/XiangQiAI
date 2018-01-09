@@ -4,9 +4,10 @@ from random import random
 from copy import deepcopy
 
 class MvMax:
-	def __init__(self, pl, board):
+	def __init__(self, pl, board, verbose=True):
 		self.pl = pl
 		self.board = board
+		self.verbose = verbose
 		print(self)
 	def __str__(self):
 		return "MoveMaxxer player, side: "+str(self.pl)
@@ -22,7 +23,8 @@ class MvMax:
 				elif deval == best[2]:	#If evaluation equal to current
 					if random() > 0.5:	#Check if should update
 						best = (p,m,deval)
-		print("MoveMaxxer "+str(self.pl)+" moving "+str(best[0])+" to "+str(best[1])+".")
+		if self.verbose:
+			print("MoveMaxxer "+str(self.pl)+" moving "+str(best[0])+" to "+str(best[1])+".")
 		self.board.make_move(best[0],best[1])
 
 	def analyze(self, piece, move, movesNow, covNow):	#Analyzes move, return evaluation based on gained moves

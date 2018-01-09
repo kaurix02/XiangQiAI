@@ -5,9 +5,10 @@ from copy import deepcopy
 from common import getValue
 
 class SFocus:
-	def __init__(self, pl, board):
+	def __init__(self, pl, board, verbose=True):
 		self.pl = pl
 		self.board = board
+		self.verbose = verbose
 		print(self)
 	def __str__(self):
 		return "SingleFocus player, side: "+str(self.pl)
@@ -35,13 +36,15 @@ class SFocus:
 					deval = self.doDef(p,m,maxPr)
 					if deval > best[2]:
 						best = (p,m,deval)
-		print("SFocus best defensive move: "+str(best))
+		if self.verbose:
+			print("SFocus best defensive move: "+str(best))
 
 		if opPr[1]>2:	#If something valuable can be taken, take!
 			p, m, deval = self.doAtt(opPr, moves, c)
 			if deval > best[2]:
 				best = (p,m,deval)
-		print("SFocus best defensive/offensive move: "+str(best))
+		if self.verbose:
+			print("SFocus best defensive/offensive move: "+str(best))
 
 		for p in moves:
 			for m in moves[p]:
@@ -56,7 +59,8 @@ class SFocus:
 					deval = self.analyze(p,m,tmoves, c)
 					if deval > best[2]:	#If evaluation beats current best move
 						best = (p,m,deval)	#New best move saved!
-		print("SingleFocus "+str(self.pl)+" moving "+str(best[0])+" to "+str(best[1])+".")
+		if self.verbose:
+			print("SingleFocus "+str(self.pl)+" moving "+str(best[0])+" to "+str(best[1])+".")
 		self.board.make_move(best[0],best[1])
 
 	def analyze(self, piece, move, movesNow, cov):	#Analyzes move, return evaluation based on gained moves
