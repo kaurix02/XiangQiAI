@@ -166,7 +166,7 @@ class TriTac:
 		print("Best offensive move: "+str(res))
 		return res
 	def minMoves(self, moves, cov):
-		opMoves = len(self.board.get_moves((self.player+1)%2))	#How many possible moves opponent has
+		opMoves = len(self.board.get_moves((self.pl+1)%2))	#How many possible moves opponent has
 		covNow = self.getCovers(self.board, cov)	#How well are friendly pieces covered
 		best = (None, None, opMoves, covNow)
 		for p in moves:
