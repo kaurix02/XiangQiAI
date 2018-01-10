@@ -18,6 +18,7 @@ class XiangQi():
 		self.play()
 	def getImages(self):	#Helper method that adds an image reference to each piece
 		self.im = {}
+		self.im["FF"] = tk.PhotoImage(file="images/FF.gif")	#Free tile
 		for p in self.board.get_pieces(0):
 			self.im[str(p)] = tk.PhotoImage(file="images/"+p.name+"0.gif")
 		for p in self.board.get_pieces(1):
@@ -47,7 +48,7 @@ class XiangQi():
 		for i in range(10):	#Row
 			for j in range(9):	#Column
 				if self.board.board[i][j] is None:	#Empty
-					t = self.canvas.create_rectangle((20+j*60,560-i*60,80+j*60,620-i*60), fill="red")
+					t = self.canvas.create_image(50+j*60,590-i*60, image=self.im["FF"])
 					self.canvas.tag_bind(t,"<Button-1>",lambda x:self.click(x)) #self.moveTo(i,j))
 					#tk.Button(self.master, command=lambda: self.moveTo(i,j), width=5, height=5, image=None, bd=0).grid(row=9-i,column=j)
 				elif self.board.board[i][j].pl == self.board.player:	#Friendly
@@ -72,7 +73,6 @@ class XiangQi():
 		print("Moving with "+str(piece))
 		self.m_fr = piece
 	def moveTo(self, x, y):
-		print(x,y)
 		if self.m_fr is None:	#No piece selected, do nothing.
 			return
 		if self.m_fr in self.avail_moves:
@@ -82,7 +82,6 @@ class XiangQi():
 				self.play()
 			else:
 				print("Bad move: ",x,y)
-		print(self.m_fr)
 r=tk.Tk()
 app = XiangQi(1,r)
 #r.master.title("XiangQi")
