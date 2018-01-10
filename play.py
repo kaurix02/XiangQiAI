@@ -85,6 +85,6 @@ def run_test_bg(pls, n=10):
 # new_game(Dummy, Dummy)	# Example to do dummy v dummy game
 # run_test_bg(players[1:])
 # run_test_med(TriTac, players[1:])
-# print(run_test_sm(TriTac, MvMax,10))
-print(new_game(AlphaBeta, Dummy))
+# print(run_test_sm(TriTac, Dummy,10))
+# print(new_game(AlphaBeta, Dummy))
 # new_game(Dummy, TriTac)
