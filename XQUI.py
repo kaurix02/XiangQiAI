@@ -28,14 +28,18 @@ class XiangQi():
 			if self.board.player == 0:
 				self.moves += 1
 				print("Player turn")
-				self.avail_moves,_ = self.board.get_moves()
 				self.draw()
+				self.board.is_checkmate()
+				if self.moves > 300:
+					print("### Game too long! ###")
+					self.board.won = 2
 			else:
-				self.pl2.move()		
-			self.board.is_checkmate()
-			if self.moves > 300:
-				print("### Game too long! ###")
-				self.board.won = 2
+				self.pl2.move()
+				self.board.is_checkmate()
+				if self.moves > 300:
+					print("### Game too long! ###")
+					self.board.won = 2
+				self.play()
 		else:
 			self.draw()
 			if self.board.won == 2:
@@ -44,7 +48,9 @@ class XiangQi():
 				print("Game over, winner: " + str(self.board.won))
 	def draw(self):
 		self.canvas.delete("all")
+		self.canvas.update_idletasks()
 		self.canvas.create_image(0,0,image=self.background_image,anchor='nw')
+		self.avail_moves,_ = self.board.get_moves()
 		for i in range(10):	#Row
 			for j in range(9):	#Column
 				if self.board.board[i][j] is None:	#Empty
