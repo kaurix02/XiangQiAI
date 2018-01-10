@@ -14,7 +14,7 @@ class XiangQi():
 		# self.background_label.place(x=0, y=0, width=580, height=640)
 		self.getImages()	#Dict of images
 		self.moves = 0
-		self.mv_fr = None
+		self.m_fr = None
 		self.play()
 	def getImages(self):	#Helper method that adds an image reference to each piece
 		self.im = {}
