@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import messagebox
 from play import players
 from board import Board
 
@@ -24,28 +25,32 @@ class XiangQi():
 		for p in self.board.get_pieces(1):
 			self.im[str(p)] = tk.PhotoImage(file="images/"+p.name+"1.gif")
 	def play(self):
+		self.board.is_checkmate()
 		if self.board.won is None:  # While game continues...
 			if self.board.player == 0:
 				self.moves += 1
 				print("Player turn")
 				self.draw()
-				self.board.is_checkmate()
+
 				if self.moves > 300:
 					print("### Game too long! ###")
 					self.board.won = 2
 			else:
 				self.pl2.move()
-				self.board.is_checkmate()
-				if self.moves > 300:
-					print("### Game too long! ###")
-					self.board.won = 2
 				self.play()
 		else:
 			self.draw()
 			if self.board.won == 2:
+				messagebox.showinfo("Game over", "stalemate!")
 				print("Game over, stalemate!")
+				self.master.destroy()
 			else:
+				if self.board.won == 0:
+					messagebox.showinfo("Game over", "you win!")
+				else:
+					messagebox.showinfo("Game over", "you lose :(")
 				print("Game over, winner: " + str(self.board.won))
+				self.master.destroy()
 	def draw(self):
 		self.canvas.delete("all")
 		self.canvas.update_idletasks()
