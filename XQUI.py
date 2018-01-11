@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 from play import players
 from board import Board
+import sys
 
 class XiangQi():
 	def __init__(self, pl2, master=None):
@@ -94,6 +95,9 @@ class XiangQi():
 			else:
 				print("Bad move: ",x,y)
 r=tk.Tk()
-app = XiangQi(1,r)
+if len(sys.argv) > 1:
+	app = XiangQi(int(sys.argv[1])+1,r)
+else:
+	app = XiangQi(1,r)
 #r.master.title("XiangQi")
 r.mainloop()
