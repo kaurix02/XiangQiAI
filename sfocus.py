@@ -104,13 +104,14 @@ class SFocus:
 				count += getValue(tp)
 		return count
 
-	def getPriority(self, piece, board=None):
+	def getPriority(self, piece, board=None, cov=None, opMoves=None):
 		if board == None:
 			board = self.board
 		threats = 0  # Count threats to this piece
 		covers = 0  # Count how many friendlies protect this piece
-		_, cov = board.get_moves(piece.pl)
-		opMoves, _ = board.get_moves((piece.pl + 1) % 2)
+		if cov is None:
+			_, cov = board.get_moves(piece.pl)
+			opMoves, _ = board.get_moves((piece.pl + 1) % 2)
 		for p in opMoves:
 			for m in opMoves[p]:
 				if m[0] == piece.x and m[1] == piece.y:  # If enemy piece threatens this piece
@@ -126,14 +127,27 @@ class SFocus:
 		board2 = deepcopy(self.board)  # Copy board
 		board2.make_move(piece, move)
 		maxPr2 = (None, -9999)  # Check most priority after move
+		_, cov = board2.get_moves(piece.pl)
+		opMoves, _ = board2.get_moves((piece.pl + 1) % 2)
+		"""
 		for i in board2.board:  # Rows
 			for j in i:  # Pieces
 				if j == None:  # If no piece is there, ignore
 					continue
 				if j.pl == self.pl:
-					pr = self.getPriority(j, board2)
+					pr = self.getPriority(j, board2, cov, opMoves)
 					if pr > maxPr2[1]:
 						maxPr2 = (j, pr)
+		"""
+		x,y = maxPr[0].x, maxPr[0].y
+		if piece == maxPr[0]:
+			pr = self.getPriority(board2.board[move[0]][move[1]],board2,cov,opMoves)
+		else:
+			pr = self.getPriority(board2.board[x][y],board2,cov,opMoves)
+		if pr > maxPr[1]:
+			return (pr-maxPr[1])*3
+		else:
+			return -9999
 		if maxPr2[1] < maxPr[1]:  # MaxPriority has fallen
 			score = maxPr2[1] - maxPr[1]
 		return score
@@ -142,7 +156,7 @@ class SFocus:
 		mFinal = (maxPr[0].x, maxPr[0].y)
 		score = (None, -9999)
 		pieces = []
-		for p in moves:
+		for p in moves:	#Find out who can attack this piece
 			for m in moves[p]:
 				if m == mFinal:
 					pieces.append(p)
@@ -152,6 +166,6 @@ class SFocus:
 			sc -= len(cov.get(p, []))  # Prefer using pieces that do not defend others
 			if sc > score[1]:
 				score = (p, sc)
-		res = (score[0], mFinal, score[1] + 10)  # Add value to show the benefit of a good offense!
+		res = (score[0], mFinal, score[1] + 25)  # Add value to show the benefit of a good offense!
 		# print("Best offensive move: "+str(res))
 		return res
