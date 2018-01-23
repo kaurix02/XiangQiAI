@@ -17,6 +17,7 @@ class SFocus:
 
 	def move(self):
 		moves, c = self.board.get_moves(self.pl)
+		opMoves, opC = self.board.get_moves((self.pl+1)%2)
 		tmoves, tc = len(moves), len(c)
 		maxPr = (None, -9999)  # Check most priority
 		opPr = (None, -9999)  # Check most priority for opponent
@@ -24,27 +25,29 @@ class SFocus:
 			for j in i:  # Pieces
 				if j == None:  # If no piece is there, ignore
 					continue
-				pr = self.getPriority(j)
 				if j.pl == self.pl:
+					pr = self.getPriority(j, None, c, opMoves)
 					if pr > maxPr[1]:
 						maxPr = (j, pr)
 				else:
-					if -pr > opPr[1]:
-						opPr = (j, -pr)
+					pr = self.getPriority(j, None, opC, moves)
+					if pr > opPr[1]:
+						opPr = (j, pr)
 		best = (None, None, -9999)
 
-		if maxPr[1] > 2:  # If something valuable is under threat, do something defensive
+		if maxPr[1] >= 1:  # If something is under threat, do something defensive
+			print("Def: ",maxPr)
 			for p in moves:
 				for m in moves[p]:
 					deval = self.doDef(p, m, maxPr)
 					if best[0] is None:
 						best = (p, m, deval)
-					if deval > best[2]:
+					if deval < best[2]:
 						best = (p, m, deval)
 		if self.verbose:
 			print("SFocus best defensive move: " + str(best))
 
-		if opPr[1] > 2:  # If something valuable can be taken, take!
+		if opPr[1] >= 1:  # If something can be taken, take!
 			p, m, deval = self.doAtt(opPr, moves, c)
 			if deval > best[2]:
 				best = (p, m, deval)
@@ -58,7 +61,7 @@ class SFocus:
 					best = (p, m, deval)
 					print("SFocus dealing Checkmate!")
 
-		if best[2] < 10:  # If the best move so far is a bad move
+		if best[2] < 3:  # If the best move so far is a bad move
 			for p in moves:
 				for m in moves[p]:
 					deval = self.analyze(p, m, tmoves, c)
@@ -72,7 +75,7 @@ class SFocus:
 		board2 = deepcopy(self.board)
 		covNow = self.getCovers(self.board, cov)  # Score protected pieces
 		thrNow = self.getThreats(board2)  # Score threats to own pieces
-		board2.make_move(piece, move)
+		board2.make_move((piece.x,piece.y), move)
 		movesLater, cov2 = board2.get_moves(self.pl)
 		movesLater = len(movesLater)
 		covLater = self.getCovers(board2, cov2)  # Score protected pieces
@@ -118,18 +121,17 @@ class SFocus:
 					threats += 1
 		for p in cov:
 			for cp in cov[p]:
-				if cp == piece:  # If friendly piece covers this piece
+				if cp.x == piece.x and cp.y == piece.y:  # If friendly piece covers this piece
 					covers += 1
 		return (threats - covers) * getValue(piece)  # returns threat level weighed by piece value
 
 	def doDef(self, piece, move, maxPr):
 		score = 0
 		board2 = deepcopy(self.board)  # Copy board
-		board2.make_move(piece, move)
-		maxPr2 = (None, -9999)  # Check most priority after move
+		board2.make_move((piece.x, piece.y), move)
+		maxPr2 = (None, 9999)  # Check most priority after move
 		_, cov = board2.get_moves(piece.pl)
 		opMoves, _ = board2.get_moves((piece.pl + 1) % 2)
-		"""
 		for i in board2.board:  # Rows
 			for j in i:  # Pieces
 				if j == None:  # If no piece is there, ignore
@@ -144,15 +146,17 @@ class SFocus:
 			pr = self.getPriority(board2.board[move[0]][move[1]],board2,cov,opMoves)
 		else:
 			pr = self.getPriority(board2.board[x][y],board2,cov,opMoves)
-		if pr > maxPr[1]:
-			return (pr-maxPr[1])*3
+		if pr < maxPr[1]:
+			return (maxPr[1]-pr)*3
 		else:
 			return -9999
+		"""
 		if maxPr2[1] < maxPr[1]:  # MaxPriority has fallen
-			score = maxPr2[1] - maxPr[1]
+			score = maxPr[1] - maxPr2[1]
 		return score
 
 	def doAtt(self, maxPr, moves, cov):  # Chooses which piece to use to take enemy piece
+		print("Att", maxPr)
 		mFinal = (maxPr[0].x, maxPr[0].y)
 		score = (None, -9999)
 		pieces = []
@@ -166,6 +170,6 @@ class SFocus:
 			sc -= len(cov.get(p, []))  # Prefer using pieces that do not defend others
 			if sc > score[1]:
 				score = (p, sc)
-		res = (score[0], mFinal, score[1] + 25)  # Add value to show the benefit of a good offense!
+		res = (score[0], mFinal, score[1] + 10)  # Add value to show the benefit of a good offense!
 		# print("Best offensive move: "+str(res))
 		return res

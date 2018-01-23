@@ -333,7 +333,10 @@ class Board:
 
 	def make_move(self, *args):  # Move piece at x1,y1 to x2,y2
 		x1, y1, x2, y2 = None, None, None, None
-		if len(args) == 4:
+		if type(args[0]) is tuple:
+			x1, y1 = args[0][0], args[0][1]	# From
+			x2, y2 = args[1][0], args[1][1]	# To
+		elif len(args) == 4:
 			x1, y1 = args[0], args[1]  # From
 			x2, y2 = args[2], args[3]  # To
 		elif len(args) == 3:
@@ -350,6 +353,7 @@ class Board:
 		# self.show()
 		if self.check:
 			print("## You are in check! ##")
+		self.checkIntegrity()
 		# self.is_checkmate()
 
 	def get_pieces(self, player=None):  # Get all the pieces of this player
@@ -362,7 +366,17 @@ class Board:
 				if piece is not None and piece.pl == player:
 					pieces.append(piece)
 		return pieces
-
+	def checkIntegrity(self):
+		bad = 0
+		for i in range(10):
+			for j in range(9):
+				if self.board[i][j] is not None:
+					if self.board[i][j].x != i:
+						bad += 1
+					if self.board[i][j].y != j:
+						bad += 1
+		if bad>0:
+			print("Errors: "+str(bad))
 
 class Piece:
 	def __init__(self, name, x, y, pl):
