@@ -314,8 +314,57 @@ class Board:
 							protectors[self.board[mid_x][mid_y]].add(protected)
 
 		return protectors
+	def get_covers(self, moves=None, player=None):
+		if player is None:
+			player = self.player
+		if moves is None:
+			moves = self.get_moves_(player)
+		protectors = defaultdict(list)
+		pl_pieces = self.get_pieces(player)	# Find all friendlies
 
-	def get_moves(self, player=None):  # Get all possible moves for given player
+		for piece in pl_pieces:
+			p_moves = piece.get_all_moves()
+			for m in p_moves:
+				tgt = self.board[m[0]][m[1]]
+				if tgt is not None and tgt.pl == player:	# if move to friendly piece
+					if piece.name == "R":
+						if piece.x == tgt.x:	# if on same horizontal line
+							if abs(piece.y-tgt.y) == 1 or (tgt.x,tgt.y+(1 if piece.y>tgt.y else -1)) in moves.get(piece,[]):	# If it can go next to it, it can protect it
+								protectors[piece].append(tgt)
+						else:
+							if abs(piece.x-tgt.x) == 1 or (tgt.x+ (1 if piece.x>tgt.x else -1),tgt.y) in moves.get(piece,[]):
+								protectors[piece].append(tgt)
+					elif piece.name == "C":
+						bl = 0
+						if piece.x == tgt.x:
+							inc = 1 if piece.y < tgt.y else -1
+							for i in range(piece.y+inc,tgt.y,inc):
+								if self.board[piece.x][i] is not None:	# Count pieces between Cannon and target
+									bl += 1
+						else:
+							inc = 1 if piece.x < tgt.x else -1
+							for i in range(piece.x+inc,tgt.x,inc):
+								if self.board[i][piece.y] is not None:
+									bl += 1
+						if bl == 1:	# If exactly one piece in between, can protect (though if opponent uses that to attack....)
+							protectors[piece].append(tgt)
+					elif piece.name == "E":
+						if self.board[piece.x+(1 if piece.x<tgt.x else -1)][piece.y+(1 if piece.y<tgt.y else -1)] is None:	# If nothing in between, can protect
+							protectors[piece].append(tgt)
+					elif piece.name == "H":
+						if abs(piece.x-tgt.x) == 2:	# If long move on x-axis
+							inc = 1 if piece.x < tgt.x else -1
+							if self.board[piece.x+inc][piece.y] is not None:	# If first square unblocked, can protect
+								protectors[piece].append(tgt)
+						else:
+							inc = 1 if piece.y < tgt.y else -1
+							if self.board[piece.x][piece.y+inc] is not None:
+								protectors[piece].append(tgt)
+					else:	# Pieces with move range 1
+						protectors[piece].append(tgt)
+		return protectors
+
+	def get_moves_(self, player=None):	# Helper function
 		if player is None:
 			player = self.player
 		moves = {}  # Valid moves per piece
@@ -328,7 +377,12 @@ class Board:
 
 		if len(moves) == 0:
 			self.won = (self.player + 1) % 2
-		covers = self.get_protectors(player)  # Which friendly pieces are 'protected' by piece
+		return moves
+
+	def get_moves(self, player=None):  # Get all possible moves for given player
+		moves = self.get_moves_(player)
+		#covers = self.get_protectors(player)  # Which friendly pieces are 'protected' by piece
+		covers = self.get_covers(moves, player)
 		return moves, covers
 
 	def make_move(self, *args):  # Move piece at x1,y1 to x2,y2

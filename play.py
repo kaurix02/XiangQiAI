@@ -49,7 +49,7 @@ def new_game(pl1, pl2, new_board=None, verbose=True):
 def run_test_sm(p1, p2, n=10):
 	res = {0: [0, 0], 1: [0, 0], 2: [0, 0]}
 	for i in range(n):  # Do n games
-		r, m = new_game(p1, p2, verbose=True)
+		r, m = new_game(p1, p2, verbose=False)
 		res[r][0] += 1  # Count victory
 		res[r][1] += m  # Count moves taken
 	for i in range(3):

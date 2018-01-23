@@ -36,7 +36,6 @@ class SFocus:
 		best = (None, None, -9999)
 
 		if maxPr[1] >= 1:  # If something is under threat, do something defensive
-			print("Def: ",maxPr)
 			for p in moves:
 				for m in moves[p]:
 					deval = self.doDef(p, m, maxPr)
@@ -129,7 +128,7 @@ class SFocus:
 		score = 0
 		board2 = deepcopy(self.board)  # Copy board
 		board2.make_move((piece.x, piece.y), move)
-		maxPr2 = (None, 9999)  # Check most priority after move
+		maxPr2 = (None, -9999)  # Check most priority after move
 		_, cov = board2.get_moves(piece.pl)
 		opMoves, _ = board2.get_moves((piece.pl + 1) % 2)
 		for i in board2.board:  # Rows
@@ -152,11 +151,10 @@ class SFocus:
 			return -9999
 		"""
 		if maxPr2[1] < maxPr[1]:  # MaxPriority has fallen
-			score = maxPr[1] - maxPr2[1]
+			score = (maxPr[1] - maxPr2[1])
 		return score
 
 	def doAtt(self, maxPr, moves, cov):  # Chooses which piece to use to take enemy piece
-		print("Att", maxPr)
 		mFinal = (maxPr[0].x, maxPr[0].y)
 		score = (None, -9999)
 		pieces = []

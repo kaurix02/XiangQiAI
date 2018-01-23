@@ -31,7 +31,6 @@ class XiangQi():
 			if self.board.player == 0:
 				self.moves += 1
 				print("Player turn")
-				print(self.board.get_moves())
 				self.draw()
 
 				if self.moves > 300:
