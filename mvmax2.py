@@ -10,7 +10,6 @@ class MvMax2:
 		self.pl = pl
 		self.board = board
 		self.verbose = verbose
-		print(self)
 
 	def __str__(self):
 		return "MoveMaxxer player, side: " + str(self.pl) + ", smart"
@@ -29,7 +28,8 @@ class MvMax2:
 						best = (p, m, deval)
 		if self.verbose:
 			print("MoveMaxxer " + str(self.pl) + " moving " + str(best[0]) + " to " + str(best[1]) + ".")
-		self.board.make_move(best[0], best[1])
+		return best[0], best[1]
+		# self.board.make_move(best[0], best[1])
 
 	def analyze(self, piece, move, movesNow, cov):  # Analyzes move, return evaluation based on gained moves
 		board2 = deepcopy(self.board)

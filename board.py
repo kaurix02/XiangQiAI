@@ -386,6 +386,8 @@ class Board:
 		return moves, covers
 
 	def make_move(self, *args):  # Move piece at x1,y1 to x2,y2
+		if type(args) is tuple and len(args)==1:
+			args = args[0]
 		x1, y1, x2, y2 = None, None, None, None
 		if type(args[0]) is tuple:
 			x1, y1 = args[0][0], args[0][1]	# From
@@ -407,7 +409,7 @@ class Board:
 		# self.show()
 		if self.check:
 			print("## You are in check! ##")
-		self.checkIntegrity()
+		# self.checkIntegrity()
 		# self.is_checkmate()
 
 	def get_pieces(self, player=None):  # Get all the pieces of this player

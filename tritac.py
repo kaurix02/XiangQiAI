@@ -4,6 +4,7 @@
 from random import random
 from copy import deepcopy
 from common import getValue
+from sfocus import SFocus
 
 
 class TriTac:
@@ -11,7 +12,6 @@ class TriTac:
 		self.pl = pl
 		self.board = board
 		self.verbose = verbose
-		print(self)
 
 	def __str__(self):
 		return "TriTac player, side: " + str(self.pl)
@@ -20,7 +20,8 @@ class TriTac:
 		moves, c = self.board.get_moves(self.pl)
 		tmoves, tc = len(moves), c
 		best = (None, None, -9999)
-		pcs = len(self.board.get_pieces(0)) + len(self.board.get_pieces(1))  # 14+14
+		op_pcs = len(self.board.get_pieces((self.pl+1)%2))
+		pcs = len(self.board.get_pieces(self.pl)) + op_pcs  # 14+14
 		if pcs > 20:  # After fewer than 8 pieces have been taken in total
 			for p in moves:
 				for m in moves[p]:
@@ -34,49 +35,11 @@ class TriTac:
 					elif best[2] - deval < 1:  # If a move is almost as good
 						if random() > 0.7:
 							best = (p, m, deval)
-		elif pcs > 16:  # When there are still many pieces at play
-			maxPr = (None, -9999)  # Check most priority
-			opPr = (None, -9999)  # Check most priority for opponent
-			for i in self.board.board:  # Rows
-				for j in i:  # Pieces
-					if j == None:  # If no piece is there, ignore
-						continue
-					pr = self.getPriority(j)
-					if j.pl == self.pl:
-						if pr > maxPr[1]:
-							maxPr = (j, pr)
-					else:
-						if -pr > opPr[1]:
-							if random() > 0.1:  # Small chance of ignoring
-								opPr = (j, -pr)
-			best = (None, None, -9999)
-
-			if maxPr[1] > 2:  # If something valuable is under threat, do something defensive
-				for p in moves:
-					for m in moves[p]:
-						deval = self.doDef(p, m, maxPr)
-						if best[0] is None:
-							best = (p, m, deval)
-						elif deval > best[2]:
-							best = (p, m, deval)
-			# if self.verbose:
-			#	print("TriTac best defensive move: "+str(best))
-
-			if opPr[1] > 2:  # If something valuable can be taken, take!
-				p, m, deval = self.doAtt(opPr, moves, c)
-				if best[0] is None:
-					best = (p, m, deval)
-				elif deval > best[2]:
-					best = (p, m, deval)
-			if best[0] is None:  # No good moves available
-				choice = int(len(moves) * random())
-				my_piece = list(moves.keys())[choice]  # Choose piece to move
-				my_move = moves[my_piece][int(len(moves[my_piece]) * random())]
-				best = (my_piece, my_move)
-		# if self.verbose:
-		#	print("TriTac best defensive/offensive move: "+str(best))
-		else:  # Once half the board has been cleared
+		elif op_pcs < 6:
 			best = self.minMoves(moves, c)
+		else:  # When there are still many pieces at play
+			model = SFocus(self.pl, self.board, False)
+			best = model.move()
 		if self.verbose:
 			print("TriTac making move: " + str(best))
 		if best[0] is None:
@@ -85,7 +48,8 @@ class TriTac:
 			my_piece = list(moves.keys())[choice]  # Choose piece to move
 			my_move = moves[my_piece][int(len(moves[my_piece]) * random())]
 			best = (my_piece, my_move)
-		self.board.make_move(best[0], best[1])
+		return best[0],best[1]
+		# self.board.make_move(best[0], best[1])
 
 	def analyze(self, piece, move, movesNow, cov):  # Analyzes move, return evaluation based on gained moves
 		board2 = deepcopy(self.board)
@@ -104,8 +68,9 @@ class TriTac:
 			score += (thrNow - thrLater) * 2  # Smaller scalar to account for threat value
 			return score  # return heuristic score for move
 
-	def getThreats(self, board):
-		opMoves, _ = board.get_moves((self.pl + 1) % 2)  # Get potential moves by opponent
+	def getThreats(self, board, opMoves = None):
+		if opMoves is None:
+			opMoves, _ = board.get_moves((self.pl + 1) % 2)  # Get potential moves by opponent
 		count = 0
 		for p in opMoves:
 			for m in opMoves[p]:
@@ -123,58 +88,6 @@ class TriTac:
 				count += getValue(tp)
 		return count
 
-	def getPriority(self, piece, board=None):
-		if board == None:
-			board = self.board
-		threats = 0  # Count threats to this piece
-		covers = 0  # Count how many friendlies protect this piece
-		_, cov = board.get_moves(piece.pl)
-		opMoves, _ = board.get_moves((piece.pl + 1) % 2)
-		for p in opMoves:
-			for m in opMoves[p]:
-				if m[0] == piece.x and m[1] == piece.y:  # If enemy piece threatens this piece
-					threats += 1
-		for p in cov:
-			for cp in cov[p]:
-				if cp == piece:  # If friendly piece covers this piece
-					covers += 1
-		return (threats - covers) * getValue(piece)  # returns threat level weighed by piece value
-
-	def doDef(self, piece, move, maxPr):
-		score = 0
-		board2 = deepcopy(self.board)  # Copy board
-		board2.make_move(piece, move)
-		maxPr2 = (None, -9999)  # Check most priority after move
-		for i in board2.board:  # Rows
-			for j in i:  # Pieces
-				if j == None:  # If no piece is there, ignore
-					continue
-				if j.pl == self.pl:
-					pr = self.getPriority(j, board2)
-					if pr > maxPr2[1]:
-						maxPr2 = (j, pr)
-		if maxPr2[1] < maxPr[1]:  # MaxPriority has fallen
-			score = maxPr2[1] - maxPr[1]
-		return score
-
-	def doAtt(self, maxPr, moves, cov):  # Chooses which piece to use to take enemy piece
-		mFinal = (maxPr[0].x, maxPr[0].y)
-		score = (None, -9999)
-		pieces = []
-		for p in moves:
-			for m in moves[p]:
-				if m == mFinal:
-					pieces.append(p)
-		for p in pieces:
-			sc = getValue(maxPr[0])  # Initialize on piece value
-			sc -= getValue(p)  # Prefer using pieces with low value
-			sc -= len(cov.get(p, []))  # Prefer using pieces that do not defend others
-			if sc > score[1]:
-				score = (p, sc)
-		res = (score[0], mFinal, score[1] + 14)  # Add value to show the benefit of a good offense!
-		print("Best offensive move: " + str(res))
-		return res
-
 	def minMoves(self, moves, cov):
 		opMoves = len(self.board.get_moves((self.pl + 1) % 2))  # How many possible moves opponent has
 		covNow = self.getCovers(self.board, cov)  # How well are friendly pieces covered
@@ -188,15 +101,20 @@ class TriTac:
 				elif res[2] == 0:  # Checkmate.
 					return res
 				elif res[2] < best[2]:
-					if random() * (
-							res[3] / best[3]) > 0.4:  # Make a judgment call according to possible loss in defense
-						best = res
-		return best
+					if best[3] == 0 or best[4] == 0:	# Cannot divide
+						if res[3]>0:
+							best = res
+					else:
+						if random() * (res[3] / best[3]) * ((res[4]/best[4])**2) > 0.450 :  # Make a judgment call according to possible loss in defense
+							best = res
+		return best[0], best[1]
 
 	def getOpMoves(self, piece, move):
 		board2 = deepcopy(self.board)
 		board2.make_move(piece, move)
-		opMoves = len(board2.get_moves((self.pl + 1) % 2))
+		opMoves,_ = board2.get_moves((self.pl + 1) % 2)
+		thr = self.getThreats(board2,opMoves)
+		opMoves = len(opMoves)
 		_, c = board2.get_moves(self.pl)
 		covLater = self.getCovers(board2, c)
-		return (piece, move, opMoves, covLater)
+		return (piece, move, opMoves, covLater, thr)

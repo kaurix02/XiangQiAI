@@ -10,7 +10,6 @@ class SFocus:
 		self.pl = pl
 		self.board = board
 		self.verbose = verbose
-		print(self)
 
 	def __str__(self):
 		return "SingleFocus player, side: " + str(self.pl)
@@ -68,7 +67,8 @@ class SFocus:
 						best = (p, m, deval)  # New best move saved!
 		if self.verbose:
 			print("SingleFocus " + str(self.pl) + " moving " + str(best[0]) + " to " + str(best[1]) + ".")
-		self.board.make_move(best[0], best[1])
+		return best[0],best[1]
+		# self.board.make_move(best[0], best[1])
 
 	def analyze(self, piece, move, movesNow, cov):  # Analyzes move, return evaluation based on gained moves
 		board2 = deepcopy(self.board)

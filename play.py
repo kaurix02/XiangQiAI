@@ -22,15 +22,18 @@ def new_game(pl1, pl2, new_board=None, verbose=True):
 	pl1 = pl1(0, new_board, verbose)  # Turn class into object for player1
 	pl2 = pl2(1, new_board, verbose)  # Turn class into object for player2
 	moves = 0  # Count total number of moves
+	if verbose:
+		print(pl1)
+		print(pl2)
 	while new_board.won is None:  # While game continues...
 		if verbose:
 			print("Move %d" % moves)
 			new_board.show()
 		if new_board.player == 0:
-			pl1.move()
+			new_board.make_move(pl1.move())
 			moves += 1
 		else:
-			pl2.move()
+			new_board.make_move(pl2.move())
 		if new_board.check:
 			print("### You are in check! ###")
 		new_board.is_checkmate()
@@ -55,6 +58,7 @@ def run_test_sm(p1, p2, n=10):
 	for i in range(3):
 		if res[i][0] > 0:
 			res[i][1] = res[i][1] / res[i][0]  # Average moves per game per result
+	print(p1, p2)
 	return res
 
 

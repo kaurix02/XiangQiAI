@@ -4,7 +4,6 @@ class Human:
 	def __init__(self, pl, board):
 		self.pl = pl
 		self.board = board
-		print(self)
 
 	def __str__(self):
 		return "Human player, side: " + str(self.pl)
@@ -18,7 +17,8 @@ class Human:
 		while not self.check_move(self.mymove, moves):
 			self.mymove = input("This move is not possible. Your move: ")
 		print("Making move " + str(self.mymove) + ".")
-		self.board.make_move(self.mymove[0], self.mymove[1])
+		return self.mymove[0], self.mymove[1]
+		# self.board.make_move(self.mymove[0], self.mymove[1])
 
 	def check_move(self, move, moves):
 		move = move.strip().split()

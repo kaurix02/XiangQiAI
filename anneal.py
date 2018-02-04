@@ -20,7 +20,8 @@ class Anneal:
 		best = self.simulated_annealing(board)
 		if self.verbose:
 			print("Anneal %s moving %s to %s." % (str(self.pl), str(best[0]), str(best[1])))
-		self.board.make_move(best[0], best[1])
+		return best[0],best[1]
+		# self.board.make_move(best[0], best[1])
 
 	def get_threats(self, player, board, op_moves, pl_covers):
 		count = 0

@@ -17,7 +17,8 @@ class AlphaBeta:
 		board = deepcopy(self.board)
 		best = self.alpha_beta(board, None, None, 2, -9999, 9999, self.pl, True)[1]
 		print("AlphaBeta %s moving %s to %s." % (str(self.pl), str(best[0]), str(best[1])))
-		self.board.make_move(best[0], best[1])
+		return best[0],best[1]
+		# self.board.make_move(best[0], best[1])
 
 
 	def get_threats(self, player, board, op_moves, pl_covers):

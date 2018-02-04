@@ -8,7 +8,6 @@ class Dummy:
 		self.pl = pl
 		self.board = board
 		self.verbose = verbose
-		print(self)
 
 	def __str__(self):
 		return "Dummy player, side: " + str(self.pl)
@@ -24,4 +23,5 @@ class Dummy:
 		my_move = moves[my_piece][int(len(moves[my_piece]) * random())]
 		if self.verbose:
 			print("Dummy " + str(self.pl) + " moving " + str(my_piece) + " to " + str(my_move) + ".")
-		self.board.make_move(my_piece, my_move)
+		return my_piece, my_move
+		# self.board.make_move(my_piece, my_move)

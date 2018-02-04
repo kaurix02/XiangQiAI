@@ -1,6 +1,4 @@
 #!/bin/bash
 
-((python3 scriptplay.py 3 3) || : ) && 
-((python3 scriptplay.py 3 2) || : ) && 
-((python3 scriptplay.py 1 3) || : ) && 
-((python3 scriptplay.py 3 4) || : )
+((python3 scriptplay.py 4 4) || : ) && 
+((python3 scriptplay.py 6 4) || : )

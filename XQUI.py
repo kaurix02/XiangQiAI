@@ -37,7 +37,8 @@ class XiangQi():
 					print("### Game too long! ###")
 					self.board.won = 2
 			else:
-				self.pl2.move()
+				move = self.pl2.move()
+				self.board.make_move(move[0], move[1])	#TODO: Use this data to draw pretty
 				self.play()
 		else:
 			self.draw()
