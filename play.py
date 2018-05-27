@@ -8,10 +8,11 @@ from mvmax import MvMax  # AI player wants more mobility
 from mvmax2 import MvMax2  # AI player wants more mobility weighed by piece threats
 from sfocus import SFocus  # AI player wants defend/attack valuable pieces
 from tritac import TriTac  # AI player wants mobility, defend/attack and checkmate
+from tritac1 import TriTac as TriTac1
 from alpha_beta import AlphaBeta
 from anneal import Anneal
 
-players = [Human, Dummy, MvMax, MvMax2, SFocus, TriTac, AlphaBeta, Anneal]  # List of possible players to choose from
+players = [Human, Dummy, MvMax, MvMax2, SFocus, TriTac, TriTac1, Anneal]  # List of possible players to choose from
 
 
 def new_game(pl1, pl2, new_board=None, verbose=True):

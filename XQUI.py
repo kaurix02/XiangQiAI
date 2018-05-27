@@ -9,18 +9,21 @@ class XiangQi():
 		self.master = master
 		self.board = Board()
 		self.pl2 = players[pl2](1, self.board)  # Turn class into object for player2
-		self.background_image = tk.PhotoImage(file="images/board.gif")	#Use board as bgd
+#		self.background_image = tk.PhotoImage(file="images/board.gif")	#Use board as bgd
+		self.background_image = tk.PhotoImage(file="images/boardnum.gif")	#Use board as bgd
 		# self.background_label = tk.Label(self.master, image=self.background_image, width=580, height=640)
 		self.canvas = tk.Canvas(self.master, width=580, height=640)
 		self.canvas.pack()
 		# self.background_label.place(x=0, y=0, width=580, height=640)
 		self.getImages()	#Dict of images
 		self.moves = 0
+		self.last_move = None
 		self.m_fr = None
 		self.play()
 	def getImages(self):	#Helper method that adds an image reference to each piece
 		self.im = {}
 		self.im["FF"] = tk.PhotoImage(file="images/FF.gif")	#Free tile
+		self.im["MM"] = tk.PhotoImage(file="images/MM.gif")	#Movedfrom Movedto indicator
 		for p in self.board.get_pieces(0):
 			self.im[str(p)] = tk.PhotoImage(file="images/"+p.name+"0.gif")
 		for p in self.board.get_pieces(1):
@@ -38,6 +41,7 @@ class XiangQi():
 					self.board.won = 2
 			else:
 				move = self.pl2.move()
+				self.last_move = ((move[0].x,move[0].y),move[1])	#Keep last AI move in memory for drawing later
 				self.board.make_move(move[0], move[1])	#TODO: Use this data to draw pretty
 				self.play()
 		else:
@@ -60,6 +64,9 @@ class XiangQi():
 		self.avail_moves,_ = self.board.get_moves()
 		for i in range(10):	#Row
 			for j in range(9):	#Column
+				if self.last_move is not None:
+					if self.last_move[1] == (i,j) or self.last_move[0] == (i,j):
+						t = self.canvas.create_image(50+j*60,590-i*60, image=self.im["MM"])
 				if self.board.board[i][j] is None:	#Empty
 					t = self.canvas.create_image(50+j*60,590-i*60, image=self.im["FF"])
 					self.canvas.tag_bind(t,"<Button-1>",lambda x:self.click(x)) #self.moveTo(i,j))
@@ -96,6 +103,7 @@ class XiangQi():
 			else:
 				print("Bad move: ",x,y)
 r=tk.Tk()
+r.wm_title("XiangQi")
 if len(sys.argv) > 1:
 	app = XiangQi(int(sys.argv[1])+1,r)
 else:
